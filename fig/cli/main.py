@@ -357,9 +357,16 @@ class TopLevelCommand(Command):
         """
         Start existing containers.
 
-        Usage: start [SERVICE...]
+        Usage: start [options] [SERVICE...]
+
+        Options:
+            -a  Attach to container and print logs after start
         """
         project.start(service_names=options['SERVICE'])
+        if options['-a']:
+            containers = project.containers(service_names=options['SERVICE'], stopped=True)
+            print("Attaching to", list_containers(containers))
+            LogPrinter(containers, attach_params={'logs': False, 'stream' : True}).run()
 
     def stop(self, project, options):
         """
